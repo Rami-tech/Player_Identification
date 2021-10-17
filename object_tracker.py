@@ -23,6 +23,7 @@ from deep_sort import preprocessing, nn_matching
 from deep_sort.detection import Detection
 from deep_sort.tracker import Tracker
 from tools import generate_detections as gdet
+import json
 flags.DEFINE_string('framework', 'tf', '(tf, tflite, trt')
 flags.DEFINE_string('weights', './checkpoints/yolov4-416',
                     'path to weights file')
@@ -92,6 +93,7 @@ def main(_argv):
 
     frame_num = 0
     # while video is running
+    data = {}
     while True:
         return_value, frame = vid.read()
         if return_value:
@@ -217,6 +219,16 @@ def main(_argv):
         # if enable info flag then print details about each track
             if FLAGS.info:
                 print("Tracker ID: {}, Class: {},  BBox Coords (xmin, ymin, xmax, ymax): {}".format(str(track.track_id), class_name, (int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3]))))
+        # Write data into json file
+            data['Tracker ID'] = str(track.track_id)
+            data['Class'] = class_name
+            data['x_min'] = int(bbox[0])
+            data['y_min'] = int(bbox[1])
+            data['x_max'] = int(bbox[2])
+            data['y_max'] = int(bbox[3])
+            
+            with open('data{}.json'.format(str(track.track_id))) as outfile:
+                json.dump(data, outfile)
 
         # calculate frames per second of running detections
         fps = 1.0 / (time.time() - start_time)
