@@ -162,10 +162,10 @@ def main(_argv):
         class_names = utils.read_class_names(cfg.YOLO.CLASSES)
 
         # by default allow all classes in .names file
-        allowed_classes = list(class_names.values())
+        #allowed_classes = list(class_names.values())
         
         # custom allowed classes (uncomment line below to customize tracker for only people)
-        #allowed_classes = ['person']
+        allowed_classes = ['person']
 
         # loop through objects and use class index to get class name, allow only classes in allowed_classes list
         names = []
@@ -211,6 +211,16 @@ def main(_argv):
                 continue 
             bbox = track.to_tlbr()
             class_name = track.get_class()
+            # Write data into json file
+            data[str(class_name)] = []
+            data[str(class_name)].append({
+                'tracker id': track.track_id,
+                'x_min': int(bbox[0]),
+                'y_min': int(bbox[1]),
+                'x_max': int(bbox[2]),
+                'y_max': int(bbox[3])
+              })
+        
             
         # draw bbox on screen
             color = colors[int(track.track_id) % len(colors)]
@@ -222,16 +232,10 @@ def main(_argv):
         # if enable info flag then print details about each track
             if FLAGS.info:
                 print("Tracker ID: {}, Class: {},  BBox Coords (xmin, ymin, xmax, ymax): {}".format(str(track.track_id), class_name, (int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3]))))
-        # Write data into json file
-            data['Tracker ID'] = str(track.track_id)
-            data['Class'] = class_name
-            data['x_min'] = int(bbox[0])
-            data['y_min'] = int(bbox[1])
-            data['x_max'] = int(bbox[2])
-            data['y_max'] = int(bbox[3])
-            
-            with open('data/info/info{}.json'.format(str(track.track_id))) as outfile:
-                json.dump(data, outfile)
+        
+        with open('data/info/info.json'.format(str(track.track_id)), 'w+') as outfile:
+          json.dump(data, outfile)
+        
 
         # calculate frames per second of running detections
         fps = 1.0 / (time.time() - start_time)
