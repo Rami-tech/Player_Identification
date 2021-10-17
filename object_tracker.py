@@ -204,6 +204,7 @@ def main(_argv):
         # Call the tracker
         tracker.predict()
         tracker.update(detections)
+        data[str(class_name)] = []
 
         # update tracks
         for track in tracker.tracks:
@@ -212,7 +213,6 @@ def main(_argv):
             bbox = track.to_tlbr()
             class_name = track.get_class()
             # Write data into json file
-            data[str(class_name)] = []
             data[str(class_name)].append({
                 'tracker id': track.track_id,
                 'x_min': int(bbox[0]),
