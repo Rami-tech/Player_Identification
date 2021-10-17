@@ -227,7 +227,7 @@ def main(_argv):
             data['x_max'] = int(bbox[2])
             data['y_max'] = int(bbox[3])
             
-            with open('data{}.json'.format(str(track.track_id))) as outfile:
+            with open('data/info/info{}.json'.format(str(track.track_id))) as outfile:
                 json.dump(data, outfile)
 
         # calculate frames per second of running detections
