@@ -41,7 +41,7 @@ flags.DEFINE_boolean('count', False, 'count objects being tracked on screen')
 
 def main(_argv):
     path = "data/info"
-    if(!os.path.exists(path)):
+    if(not os.path.exists(path)):
         os.mkdir(path)
     # Definition of the parameters
     max_cosine_distance = 0.4
